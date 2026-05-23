@@ -199,6 +199,187 @@ MAHAMERU <span class="text-emerald-400">3676 MDPL</span>
 
 </div>
 
+{{-- SECTION BERITA & TUTORIAL --}}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+
+    {{-- DAFTAR BERITA --}}
+    <div class="bg-[#0D1B2A] rounded-2xl border border-white/5 p-6 shadow-2xl fade-up delay-3">
+
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-white text-xl font-black uppercase tracking-tighter italic">
+                <i class="fas fa-newspaper text-emerald-400 mr-2"></i>
+                Daftar Berita
+            </h2>
+
+            {{-- Disesuaikan rutenya dengan standar URL Laravel agar mengarah ke halaman ini --}}
+            <a
+                href="{{ url('/berita') }}"
+                class="text-emerald-400 text-[10px] font-black uppercase hover:text-white transition"
+            >
+                Lihat Semua
+            </a>
+        </div>
+
+        <div class="space-y-4">
+
+            <a href="#" class="block group bg-[#1B263B] rounded-xl p-4 hover:bg-[#24344d] transition">
+
+                <div class="flex gap-4">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800"
+                        class="w-24 h-20 rounded-lg object-cover"
+                    >
+
+                    <div class="flex-1">
+
+                        <p class="text-emerald-400 text-[9px] font-black uppercase mb-1">
+                            12 Mei 2026
+                        </p>
+
+                        <h3 class="text-white font-black uppercase text-xs leading-tight group-hover:text-emerald-400 transition">
+                            Jalur Pendakian Ranupani Dibuka Kembali
+                        </h3>
+
+                        <p class="text-white/40 text-[10px] mt-2 leading-relaxed">
+                            Informasi terbaru mengenai pembukaan jalur pendakian Semeru untuk umum.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+            <a href="#" class="block group bg-[#1B263B] rounded-xl p-4 hover:bg-[#24344d] transition">
+
+                <div class="flex gap-4">
+
+                    <img
+                        src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800"
+                        class="w-24 h-20 rounded-lg object-cover"
+                    >
+
+                    <div class="flex-1">
+
+                        <p class="text-red-400 text-[9px] font-black uppercase mb-1">
+                            Cuaca
+                        </p>
+
+                        <h3 class="text-white font-black uppercase text-xs leading-tight group-hover:text-emerald-400 transition">
+                            Waspada Angin Kencang di Area Kalimati
+                        </h3>
+
+                        <p class="text-white/40 text-[10px] mt-2 leading-relaxed">
+                            Pendaki diimbau menggunakan perlengkapan yang memadai saat summit attack.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+        </div>
+
+    </div>
+
+    {{-- TUTORIAL PEMBELIAN TIKET --}}
+    <div class="bg-[#0D1B2A] rounded-2xl border border-white/5 p-6 shadow-2xl fade-up delay-4">
+
+        <div class="flex items-center justify-between mb-6">
+
+            <h2 class="text-white text-xl font-black uppercase tracking-tighter italic">
+                <i class="fas fa-ticket-alt text-emerald-400 mr-2"></i>
+                Tutorial Booking
+            </h2>
+
+            <span class="text-emerald-400 text-[10px] font-black uppercase">
+                4 Langkah
+            </span>
+
+        </div>
+
+        <div class="space-y-4">
+
+            <div class="flex gap-4 items-start bg-[#1B263B] rounded-xl p-4">
+
+                <div class="w-8 h-8 rounded-full bg-emerald-400 text-[#0D1B2A] flex items-center justify-center font-black text-sm">
+                    1
+                </div>
+
+                <div>
+                    <h3 class="text-white font-black uppercase text-xs mb-1">
+                        Buat Akun
+                    </h3>
+
+                    <p class="text-white/40 text-[10px] leading-relaxed">
+                        Daftar akun Mahameru Digital menggunakan email aktif.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="flex gap-4 items-start bg-[#1B263B] rounded-xl p-4">
+
+                <div class="w-8 h-8 rounded-full bg-emerald-400 text-[#0D1B2A] flex items-center justify-center font-black text-sm">
+                    2
+                </div>
+
+                <div>
+                    <h3 class="text-white font-black uppercase text-xs mb-1">
+                        Pilih Jadwal
+                    </h3>
+
+                    <p class="text-white/40 text-[10px] leading-relaxed">
+                        Tentukan tanggal pendakian dan jumlah anggota tim.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="flex gap-4 items-start bg-[#1B263B] rounded-xl p-4">
+
+                <div class="w-8 h-8 rounded-full bg-emerald-400 text-[#0D1B2A] flex items-center justify-center font-black text-sm">
+                    3
+                </div>
+
+                <div>
+                    <h3 class="text-white font-black uppercase text-xs mb-1">
+                        Upload Dokumen
+                    </h3>
+
+                    <p class="text-white/40 text-[10px] leading-relaxed">
+                        Lengkapi identitas dan surat kesehatan pendaki.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="flex gap-4 items-start bg-[#1B263B] rounded-xl p-4">
+
+                <div class="w-8 h-8 rounded-full bg-emerald-400 text-[#0D1B2A] flex items-center justify-center font-black text-sm">
+                    4
+                </div>
+
+                <div>
+                    <h3 class="text-white font-black uppercase text-xs mb-1">
+                        Bayar Tiket
+                    </h3>
+
+                    <p class="text-white/40 text-[10px] leading-relaxed">
+                        Lakukan pembayaran dan unduh e-ticket pendakian.
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
 @endsection
 
 @push('scripts')

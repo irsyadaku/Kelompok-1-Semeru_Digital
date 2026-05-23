@@ -176,7 +176,8 @@
             </p>
 
             <h2 class="text-white text-4xl font-black italic tracking-tighter uppercase drop-shadow-lg">
-                 @yield('header-title', 'MAHAMERU <span class="text-emerald-400">3676 MDPL</span>')
+                {{-- Sempurna: Memastikan tag HTML dari Halaman Utama dirender dengan benar --}}
+                {!! View::hasSection('header-title') ? View::yieldContent('header-title') : 'MAHAMERU <span class="text-emerald-400">3676 MDPL</span>' !!}
             </h2>
 
             @hasSection('header-desc')
