@@ -57,8 +57,14 @@
             </span>
         </a>
 
+        {{-- MENU UTAMA NAVBAR --}}
         <div class="flex items-center gap-4">
 
+            {{-- Tambahan Navigasi Tiket & Profil di Navbar dengan style minimalis --}}
+            <div class="hidden md:flex gap-4 text-white/70 font-bold uppercase text-[10px] tracking-widest border-r border-white/10 pr-4">
+            </div>
+
+            {{-- TOMBOL MASUK / DAFTAR --}}
             <div class="flex gap-2 text-white font-bold uppercase text-[10px] tracking-widest border-r border-white/10 pr-4">
 
                 <a
@@ -130,9 +136,30 @@
 
         </div>
 
-        <nav class="flex-1 overflow-y-auto p-4 custom-scrollbar">
+        {{-- ISI MENU SIDEBAR --}}
+        <nav class="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-6">
 
-            <div class="mx-4 mt-4 mb-6 p-4 bg-emerald-400/5 border border-emerald-400/20 rounded-xl text-center">
+            {{-- LINK NAVIGASI BARU DI DALAM SIDEBAR --}}
+            <div class="px-2 space-y-1">
+                <p class="text-white/20 text-[9px] font-black uppercase tracking-widest px-3 mb-2">Layanan Utama</p>
+
+                <a href="/booking" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition group">
+                    <i class="fas fa-ticket-alt text-emerald-400 group-hover:scale-110 transition w-5"></i>
+                    Pembelian Tiket
+                </a>
+
+                <a href="/profil" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition group">
+                    <i class="fas fa-id-card text-emerald-400 group-hover:scale-110 transition w-5"></i>
+                    Profil Pendaki
+                </a>
+
+                <a href="/berita/semua" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition group">
+                    <i class="fas fa-newspaper text-emerald-400 group-hover:scale-110 transition w-5"></i>
+                    Informasi Berita
+                </a>
+            </div>
+
+            <div class="mx-4 p-4 bg-emerald-400/5 border border-emerald-400/20 rounded-xl text-center">
 
                 <p class="text-white/40 text-[9px] font-bold uppercase mb-3">
                     Login untuk akses penuh
@@ -176,8 +203,7 @@
             </p>
 
             <h2 class="text-white text-4xl font-black italic tracking-tighter uppercase drop-shadow-lg">
-                {{-- Sempurna: Memastikan tag HTML dari Halaman Utama dirender dengan benar --}}
-                {!! View::hasSection('header-title') ? View::yieldContent('header-title') : 'MAHAMERU <span class="text-emerald-400">3676 MDPL</span>' !!}
+                 {!! View::hasSection('header-title') ? View::yieldContent('header-title') : 'MAHAMERU <span class="text-emerald-400">3676 MDPL</span>' !!}
             </h2>
 
             @hasSection('header-desc')
@@ -214,7 +240,7 @@
 
         </div>
 
-    </footer>
+    </footer >
 
     <script>
         function toggleSidebar() {
