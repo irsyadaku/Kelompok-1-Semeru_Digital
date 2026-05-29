@@ -63,10 +63,10 @@
                 <a href="{{ route('booking.index') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
                     <i class="fas fa-ticket-alt text-emerald-400 w-5"></i> Booking Tiket
                 </a>
-                <a href="/riwayat" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
+                <a href="{{ route('riwayat.transaksi') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
                     <i class="fas fa-clock-rotate-left text-emerald-400 w-5"></i> Riwayat Transaksi
                 </a>
-                <a href="/profile" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
+                <a href="{{ route('profile.index') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
                     <i class="fas fa-id-card text-emerald-400 w-5"></i> Lihat Profil
                 </a>
             </div>

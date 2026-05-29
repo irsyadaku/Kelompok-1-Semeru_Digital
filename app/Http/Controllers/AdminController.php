@@ -47,6 +47,46 @@ class AdminController extends Controller
     }
 
     /**
+     * Halaman Daftar Pembayaran yang Butuh Verifikasi
+     */
+    public function daftarVerifikasi()
+    {
+        $bookings = Pendaftaran::where('status', 'menunggu_verifikasi')
+                               ->orderBy('updated_at', 'desc')
+                               ->paginate(10);
+
+        return view('verifikasi', compact('bookings'));
+    }
+
+    /**
+     * Fungsi Terima Pembayaran
+     */
+    public function terimaPembayaran($id)
+    {
+        $booking = Pendaftaran::findOrFail($id);
+
+        $booking->update([
+            'status' => 'sudah_bayar'
+        ]);
+
+        return redirect()->back()->with('success', 'Pembayaran tiket ' . $booking->kode_booking . ' berhasil diverifikasi!');
+    }
+
+    /**
+     * Fungsi Tolak Pembayaran
+     */
+    public function tolakPembayaran($id)
+    {
+        $booking = Pendaftaran::findOrFail($id);
+
+        $booking->update([
+            'status' => 'menunggu_pembayaran'
+        ]);
+
+        return redirect()->back()->with('error', 'Pembayaran ' . $booking->kode_booking . ' ditolak. User harus mengunggah ulang bukti transfer.');
+    }
+
+    /**
      * Halaman Manajemen Berita
      */
     public function berita()

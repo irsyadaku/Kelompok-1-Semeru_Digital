@@ -67,7 +67,14 @@ Route::middleware(['auth', 'role:pendaki'])->group(function () {
     Route::post('/pembayaran/{id}/upload', [BookingTiketController::class, 'uploadBukti'])->name('pembayaran.upload');
 
     // Riwayat
-    Route::get('/riwayat', [BookingTiketController::class, 'riwayat'])->name('riwayat');
+    Route::get('/riwayat-transaksi', [BookingTiketController::class, 'riwayat'])->name('riwayat.transaksi');
+
+    // Fitur Hapus/Batalkan Transaksi
+    Route::delete('/booking/{id}', [BookingTiketController::class, 'destroy'])->name('booking.destroy');
+
+    // Fitur Profil
+    Route::get('/profil', [BookingTiketController::class, 'profile'])->name('profile.index');
+    Route::put('/profil', [BookingTiketController::class, 'profileUpdate'])->name('profile.update');
 });
 
 // ============================================================
@@ -81,6 +88,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/berita', [AdminController::class, 'berita'])->name('berita');
     Route::get('/tips', [AdminController::class, 'tips'])->name('tips');
     Route::get('/kuota', [AdminController::class, 'kuota'])->name('kuota');
+
+    Route::get('/verifikasi', [AdminController::class, 'daftarVerifikasi'])->name('verifikasi');
+    Route::post('/verifikasi/{id}/terima', [AdminController::class, 'terimaPembayaran'])->name('terima');
+    Route::post('/verifikasi/{id}/tolak', [AdminController::class, 'tolakPembayaran'])->name('tolak');
 });
 
 // ============================================================

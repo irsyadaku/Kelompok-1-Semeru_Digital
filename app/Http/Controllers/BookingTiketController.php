@@ -7,6 +7,7 @@ use App\Models\Pendaftaran;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage; // Penting untuk fungsi upload
+use Illuminate\Support\Facades\Hash;    // DITAMBAHKAN: Wajib untuk fungsi update password
 
 class BookingTiketController extends Controller
 {
@@ -108,17 +109,68 @@ class BookingTiketController extends Controller
     // Riwayat transaksi
     public function riwayat(Request $request)
     {
+        // 1. Memulai query dasar untuk user yang sedang login
         $query = Pendaftaran::where('user_id', Auth::id())
-                    ->orderBy('created_at', 'desc');
+                             ->latest();
 
-        if ($request->status) {
+        // 2. Filter berdasarkan status jika ada input dari user
+        if ($request->has('status') && !empty($request->status)) {
             $query->where('status', $request->status);
         }
 
-        $bookings   = $query->paginate(5);
+        // 3. Eksekusi data dengan pagination
+        $transaksi = $query->paginate(5);
+
+        // 4. Menghitung statistik untuk ditampilkan di view (sangat berguna untuk user)
         $sudahBayar = Pendaftaran::where('user_id', Auth::id())->where('status', 'sudah_bayar')->count();
         $menunggu   = Pendaftaran::where('user_id', Auth::id())->where('status', 'menunggu_pembayaran')->count();
 
-        return view('riwayat', compact('bookings', 'sudahBayar', 'menunggu'));
+        return view('riwayat', compact('transaksi', 'sudahBayar', 'menunggu'));
+    } // DITAMBAHKAN: Penutup fungsi riwayat yang sebelumnya hilang
+
+    public function destroy($id)
+    {
+        $booking = Pendaftaran::where('user_id', Auth::id())->findOrFail($id);
+
+        if ($booking->status !== 'menunggu_pembayaran') {
+            return redirect()->back()->with('error', 'Transaksi yang sudah diproses tidak dapat dibatalkan.');
+        }
+
+        $booking->delete();
+        return redirect()->back()->with('success', 'Pemesanan tiket berhasil dibatalkan.');
     }
+
+    public function profile()
+    {
+        $user = Auth::user();
+        return view('profil', compact('user'));
+    }
+
+    public function profileUpdate(Request $request)
+{
+    $user = Auth::user();
+
+    $request->validate([
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|string|email|max:255|unique:users,email,' . $user->id,
+        'no_hp'    => 'nullable|string|max:20',
+        'nik'      => 'nullable|string|max:16',
+        'password' => 'nullable|string|min:8|confirmed',
+    ]);
+
+    // Update data dasar
+    $user->name = $request->name;
+    $user->email = $request->email;
+
+    // Pastikan kolom ini ada di migrasi tabel users Anda, jika tidak ada bisa dilewati sementara
+    if ($request->has('no_hp')) $user->no_hp = $request->no_hp;
+    if ($request->has('nik')) $user->nik = $request->nik;
+
+    // Jika password baru diisi
+    if ($request->filled('password')) {
+        $user->password = Hash::make($request->password);
+    }
+
+    return redirect()->back()->with('success', 'Profil Agung Anda berhasil diperbarui!');
+}
 }

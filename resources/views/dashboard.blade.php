@@ -35,12 +35,12 @@
             </div>
         </div>
 
-        {{-- ✅ DINAMIS: Menampilkan hitungan tiket aktif dari Controller --}}
+        {{-- DINAMIS: Menampilkan hitungan tiket aktif dari Controller --}}
         <div class="bg-[#0D1B2A] border border-white/5 p-6 rounded-2xl flex items-center gap-4">
             <div class="w-12 h-12 rounded-xl bg-amber-400/10 flex items-center justify-center text-amber-400 text-xl"><i class="fas fa-ticket-alt"></i></div>
             <div>
                 <p class="text-white/40 text-[9px] font-black uppercase tracking-wider">Tiket Aktif</p>
-                <h4 class="text-white text-sm font-bold mt-0.5">{{ $tiketAktifCount }} Pendakian</h4>
+                <h4 class="text-white text-sm font-bold mt-0.5">{{ $tiketAktifCount ?? 0 }} Pendakian</h4>
             </div>
         </div>
 
@@ -65,41 +65,53 @@
             </a>
         </div>
 
-        {{-- ✅ DINAMIS: Menggunakan Loop untuk Riwayat Pemesanan --}}
-        <div class="bg-[#0D1B2A] border border-white/5 p-8 rounded-3xl space-y-4">
-            <div class="flex justify-between items-center">
-                <h3 class="text-white text-xs font-black uppercase tracking-wider">Riwayat Pendakian</h3>
-                <span class="text-white/30 text-[10px] font-bold uppercase tracking-wider">Total: {{ $riwayatBooking->count() }}</span>
+        {{-- ✅ TAMPILAN RIWAYAT SESUAI GAMBAR REFERENSI --}}
+        <div class="bg-[#0B1521] border border-white/5 p-8 rounded-3xl flex flex-col">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-white text-sm font-black uppercase tracking-widest">Riwayat Pendakian</h3>
+                <span class="text-slate-500 text-[10px] font-bold uppercase tracking-wider">Total: {{ $riwayatBooking->count() }}</span>
             </div>
-            <hr class="border-white/5">
 
-            <div class="space-y-3 max-h-64 overflow-y-auto pr-1">
+            <div class="space-y-4 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
                 @forelse($riwayatBooking as $booking)
-                    <div class="flex justify-between items-center bg-white/[0.02] p-4 rounded-xl border border-white/5 hover:border-emerald-400/20 transition duration-200">
+                    <a href="{{ route('riwayat.transaksi') }}" class="flex justify-between items-center bg-[#121E2D] p-5 rounded-2xl border border-white/5 hover:border-slate-600/50 transition duration-300 group block">
                         <div>
-                            <h4 class="text-white text-xs font-bold uppercase tracking-tight">#SMR-{{ $booking->id }}</h4>
-                            <p class="text-white/40 text-[10px] mt-0.5">Keberangkatan: {{ $booking->tanggal_berangkat }}</p>
+                            <h4 class="text-white text-base font-extrabold uppercase tracking-tight mb-1 group-hover:text-emerald-400 transition-colors">#SMR-{{ $booking->id }}</h4>
+                            <p class="text-slate-400 text-xs">Keberangkatan: <span class="text-slate-300">{{ $booking->tanggal_berangkat ?? '-' }}</span></p>
                         </div>
                         <div>
                             @if($booking->status === 'sudah_bayar')
-                                <span class="bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider">Lunas</span>
+                                <span class="text-emerald-400 border border-emerald-400/30 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">Lunas</span>
                             @elseif($booking->status === 'menunggu_pembayaran')
-                                <span class="bg-amber-400/10 text-amber-400 border border-amber-400/20 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider">Pending</span>
+                                <span class="text-amber-400 border border-amber-400/40 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">Pending</span>
+                            @elseif($booking->status === 'menunggu_verifikasi')
+                                <span class="text-slate-300 border border-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">Menunggu_Verifikasi</span>
                             @else
-                                <span class="bg-white/5 text-white/40 border border-white/10 px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider">{{ $booking->status }}</span>
+                                <span class="text-slate-400 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">{{ $booking->status }}</span>
                             @endif
                         </div>
-                    </div>
+                    </a>
                 @empty
-                    {{-- Tampilan Default jika belum pernah booking --}}
                     <div class="py-12 text-center text-white/20 text-xs space-y-2">
                         <i class="fas fa-folder-open text-3xl block text-white/10"></i>
                         <span class="font-bold uppercase tracking-wide block">Belum Ada Catatan Perjalanan</span>
                     </div>
                 @endforelse
             </div>
+
+            <a href="{{ route('riwayat.transaksi') }}" class="mt-auto pt-6 text-center text-xs text-slate-400 hover:text-white transition uppercase tracking-widest font-bold">
+                Lihat Semua Riwayat Transaksi &rarr;
+            </a>
         </div>
     </div>
 
 </div>
+
+<style>
+    /* Styling agar scrollbar di area riwayat terlihat lebih rapi di mode gelap */
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #334155; }
+</style>
 @endsection
