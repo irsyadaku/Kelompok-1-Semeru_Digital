@@ -31,6 +31,12 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
+
+            if (Auth::user()->role === 'admin') {
+                return redirect()->intended('/admin/dashboard')
+                    ->with('success', 'Selamat datang kembali, Pengelola Sistem!');
+            }
+
             return redirect()->intended('/dashboard');
         }
 
@@ -48,9 +54,10 @@ class AuthController extends Controller
         ]);
 
         $user = User::create([
-            'username' => $request->name,
+            'name'     => $request->name,
+            'username' => Str::slug($request->name), // Disarankan slug agar rapi
             'email'    => $request->email,
-            'password' => $request->password,
+            'password' => Hash::make($request->password), // Pastikan di-hash!
             'role'     => 'pendaki',
         ]);
 
@@ -60,15 +67,19 @@ class AuthController extends Controller
             ->with('success', 'Akun berhasil dibuat! Selamat datang di Mahameru Digital.');
     }
 
+    // --- GOOGLE LOGIN ---
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        // Parameter 'prompt' => 'select_account' memaksa Google memunculkan pilihan akun
+        return Socialite::driver('google')
+            ->with(['prompt' => 'select_account'])
+            ->redirect();
     }
 
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->stateless()->user();
+            $googleUser = Socialite::driver('google')->user();
             $existingUser = User::where('email', $googleUser->email)->first();
 
             if ($existingUser) {
@@ -76,17 +87,27 @@ class AuthController extends Controller
                 return redirect()->intended('/dashboard');
             }
 
-           $baseName = $googleUser->name;
+            // Logika Nama
+            $baseName = $googleUser->name;
             $finalName = $baseName;
-            $counter = 1;
-
+            $counterName = 1;
             while (User::where('name', $finalName)->exists()) {
-                $finalName = $baseName . ' ' . $counter;
-                $counter++;
+                $finalName = $baseName . ' ' . $counterName;
+                $counterName++;
+            }
+
+            // Logika Username Unik
+            $baseUsername = Str::slug($googleUser->name);
+            $finalUsername = $baseUsername;
+            $counterUser = 1;
+            while (User::where('username', $finalUsername)->exists()) {
+                $finalUsername = $baseUsername . $counterUser;
+                $counterUser++;
             }
 
             $newUser = User::create([
-                'name'     => $finalName, // Diubah ke 'name'
+                'name'     => $finalName,
+                'username' => $finalUsername,
                 'email'    => $googleUser->email,
                 'password' => Hash::make(Str::random(16)),
                 'role'     => 'pendaki',
@@ -101,11 +122,14 @@ class AuthController extends Controller
         }
     }
 
+    // --- LOGOUT ---
     public function logout(Request $request)
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect('/');
+        Auth::logout(); // Log out user
+
+        $request->session()->invalidate(); // Hapus session
+        $request->session()->regenerateToken(); // Buat token baru demi keamanan
+
+        return redirect('/login')->with('success', 'Anda telah keluar dari singgasana. Sampai jumpa!');
     }
 }
