@@ -45,7 +45,13 @@ class AdminController extends Controller
         $bookings = Pendaftaran::latest()->get();
         return view('admin_booking', compact('bookings'));
     }
+public function profile()
+    {
+        // Mengambil data user/admin yang sedang bertahta saat ini
+        $admin = auth()->user();
 
+        return view('admin_profile', compact('admin'));
+    }
     /**
      * Halaman Daftar Pembayaran yang Butuh Verifikasi
      */

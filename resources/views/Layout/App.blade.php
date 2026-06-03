@@ -21,7 +21,8 @@
 
     {{-- NAVBAR --}}
     <nav class="fixed top-0 left-0 w-full h-10 bg-black/20 z-50 flex items-center justify-between px-6 border-b border-white/10 backdrop-blur-sm">
-        <a href="/dashboard" class="flex items-center gap-2 group">
+        {{-- Logo Cerdas: Deteksi Rute Dashboard Sesuai Role --}}
+        <a href="{{ (Auth::check() && Auth::user()->role === 'admin') ? route('admin.dashboard') : '/dashboard' }}" class="flex items-center gap-2 group">
             <img src="{{ asset('mountain.png') }}" alt="Logo" class="h-6 w-6 object-contain brightness-0 invert transition-transform group-hover:scale-110">
             <span class="text-white text-xs font-black uppercase tracking-widest italic group-hover:text-emerald-400 transition-colors">Mahameru</span>
         </a>
@@ -57,18 +58,31 @@
         <nav class="flex-1 overflow-y-auto p-4 custom-scrollbar space-y-6">
             <div class="px-2 space-y-1">
                 <p class="text-white/20 text-[9px] font-black uppercase tracking-widest px-3 mb-2">Menu Utama</p>
-                <a href="/dashboard" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
-                    <i class="fas fa-th-large text-emerald-400 w-5"></i> Dashboard
-                </a>
-                <a href="{{ route('booking.index') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
-                    <i class="fas fa-ticket-alt text-emerald-400 w-5"></i> Booking Tiket
-                </a>
-                <a href="{{ route('riwayat.transaksi') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
-                    <i class="fas fa-clock-rotate-left text-emerald-400 w-5"></i> Riwayat Transaksi
-                </a>
-                <a href="{{ route('profile.index') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
-                    <i class="fas fa-id-card text-emerald-400 w-5"></i> Lihat Profil
-                </a>
+
+                {{-- LOGIKA MENU BERDASARKAN ROLE --}}
+                @if(Auth::check() && Auth::user()->role === 'admin')
+                    {{-- MENU KHUSUS ADMIN --}}
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
+                        <i class="fas fa-th-large text-emerald-400 w-5"></i> Singgasana Admin
+                    </a>
+                    <a href="{{ route('admin.profile') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
+                        <i class="fas fa-user-shield text-emerald-400 w-5"></i> Lihat Profil Admin
+                    </a>
+                @else
+                    {{-- MENU KHUSUS PENDAKI --}}
+                    <a href="/dashboard" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
+                        <i class="fas fa-th-large text-emerald-400 w-5"></i> Dashboard
+                    </a>
+                    <a href="{{ route('booking.index') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
+                        <i class="fas fa-ticket-alt text-emerald-400 w-5"></i> Booking Tiket
+                    </a>
+                    <a href="{{ route('riwayat.transaksi') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
+                        <i class="fas fa-clock-rotate-left text-emerald-400 w-5"></i> Riwayat Transaksi
+                    </a>
+                    <a href="{{ route('profile.index') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
+                        <i class="fas fa-id-card text-emerald-400 w-5"></i> Lihat Profil
+                    </a>
+                @endif
             </div>
 
             <div class="mx-4 p-4 border-t border-white/5">

@@ -85,6 +85,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
     Route::get('/berita', [AdminController::class, 'berita'])->name('berita');
+    Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
 
     // HALAMAN DAFTAR VERIFIKASI (Aksi dialihkan ke fungsi yang baru)
     Route::get('/verifikasi', [AdminController::class, 'daftarVerifikasi'])->name('verifikasi');
