@@ -80,12 +80,15 @@
                             <p class="text-slate-400 text-xs">Keberangkatan: <span class="text-slate-300">{{ $booking->tanggal_berangkat ?? '-' }}</span></p>
                         </div>
                         <div>
-                            @if($booking->status === 'sudah_bayar')
+                            {{-- LOGIKA STATUS YANG SUDAH DIBENARKAN --}}
+                            @if(in_array(strtolower($booking->status), ['sudah_bayar', 'disetujui']))
                                 <span class="text-emerald-400 border border-emerald-400/30 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">Lunas</span>
-                            @elseif($booking->status === 'menunggu_pembayaran')
+                            @elseif(strtolower($booking->status) === 'menunggu_pembayaran')
                                 <span class="text-amber-400 border border-amber-400/40 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">Pending</span>
-                            @elseif($booking->status === 'menunggu_verifikasi')
+                            @elseif(strtolower($booking->status) === 'menunggu_verifikasi')
                                 <span class="text-slate-300 border border-slate-600 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">Menunggu_Verifikasi</span>
+                            @elseif(strtolower($booking->status) === 'ditolak')
+                                <span class="text-red-400 border border-red-400/40 bg-red-500/5 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">Ditolak</span>
                             @else
                                 <span class="text-slate-400 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest">{{ $booking->status }}</span>
                             @endif

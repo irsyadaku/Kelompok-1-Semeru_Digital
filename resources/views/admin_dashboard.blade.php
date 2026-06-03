@@ -28,28 +28,35 @@
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
         <div class="bg-[#0D1B2A] border border-white/5 p-6 rounded-2xl space-y-1">
             <p class="text-white/40 text-[9px] font-black uppercase tracking-wider">Total User Terdaftar</p>
-            <h3 class="text-white text-3xl font-black text-emerald-400">{{ $totalUser }}</h3>
+            <h3 class="text-white text-3xl font-black text-emerald-400">{{ $totalUser ?? 0 }}</h3>
         </div>
         <div class="bg-[#0D1B2A] border border-white/5 p-6 rounded-2xl space-y-1">
             <p class="text-white/40 text-[9px] font-black uppercase tracking-wider">Menunggu Pembayaran</p>
-            <h3 class="text-white text-3xl font-black text-amber-400">{{ $menunggu }}</h3>
+            <h3 class="text-white text-3xl font-black text-amber-400">{{ $menunggu ?? 0 }}</h3>
         </div>
         <div class="bg-[#0D1B2A] border border-white/5 p-6 rounded-2xl space-y-1">
             <p class="text-white/40 text-[9px] font-black uppercase tracking-wider">Total Booking SIMAKSI</p>
-            <h3 class="text-white text-3xl font-black text-sky-400">{{ $totalBooking }}</h3>
+            <h3 class="text-white text-3xl font-black text-sky-400">{{ $totalBooking ?? 0 }}</h3>
         </div>
         <div class="bg-[#0D1B2A] border border-white/5 p-6 rounded-2xl space-y-1">
             <p class="text-white/40 text-[9px] font-black uppercase tracking-wider">Total Pendapatan</p>
-            <h3 class="text-white text-xl font-black text-white">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</h3>
+            <h3 class="text-white text-xl font-black text-white">Rp {{ number_format($totalPendapatan ?? 0, 0, ',', '.') }}</h3>
         </div>
     </div>
 
-    {{-- Tabel Monitoring Dokumen Pembayaran Masuk --}}
+    {{-- Notifikasi Sukses / Error --}}
+    @if(session('success'))
+        <div class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm p-4 rounded-xl font-bold flex items-center gap-2">
+            <i class="fas fa-check-circle"></i> {{ session('success') }}
+        </div>
+    @endif
+
+    {{-- Tabel Utama: Validasi Tiket --}}
     <div class="bg-[#0D1B2A] border border-white/5 rounded-3xl p-8 space-y-4">
         <div class="flex justify-between items-center">
             <div>
-                <h3 class="text-white text-sm font-black uppercase tracking-wider">Validasi Pembayaran Tiket Terbaru</h3>
-                <p class="text-white/40 text-xs">Menunggu persetujuan manual untuk penerbitan barcode SIMAKSI</p>
+                <h3 class="text-white text-sm font-black uppercase tracking-wider"><i class="fas fa-tasks text-emerald-400 mr-2"></i> Antrean Validasi Tiket</h3>
+                <p class="text-white/40 text-xs">Periksa bukti transfer dan setujui penerbitan SIMAKSI pendaki.</p>
             </div>
         </div>
         <hr class="border-white/5">
@@ -61,39 +68,44 @@
                         <th class="py-3 px-4 font-black">Ketua Kelompok</th>
                         <th class="py-3 px-4 font-black">Tgl Berangkat</th>
                         <th class="py-3 px-4 font-black">Status</th>
-                        <th class="py-3 px-4 font-black text-right">Aksi</th>
+                        <th class="py-3 px-4 font-black text-right">Opsi Validasi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-white/5">
                     @forelse($bookingTerbaru as $booking)
                         <tr class="hover:bg-white/[0.02] transition">
-                            <td class="py-4 px-4 font-bold text-emerald-400">#SMR-{{ $booking->id }}</td>
-                            <td class="py-4 px-4 font-bold text-white">{{ $booking->user->name ?? 'Pendaki' }}</td>
-                            <td class="py-4 px-4">{{ $booking->tanggal_mendaki ?? $booking->tanggal_berangkat }}</td>
+                            <td class="py-4 px-4 font-bold text-emerald-400">#{{ $booking->kode_booking ?? 'SMR-'.$booking->id }}</td>
+                            <td class="py-4 px-4 font-bold text-white">{{ $booking->nama_ketua ?? 'Pendaki' }}</td>
+                            <td class="py-4 px-4">{{ \Carbon\Carbon::parse($booking->tanggal_pendakian)->translatedFormat('d M Y') }}</td>
                             <td class="py-4 px-4">
-                                @if($booking->status === 'sudah_bayar')
-                                    <span class="bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Approved</span>
+                                @if($booking->status === 'menunggu_verifikasi')
+                                    <span class="bg-blue-400/10 text-blue-400 border border-blue-400/20 px-2 py-0.5 rounded text-[9px] font-bold uppercase animate-pulse">Perlu Dicek</span>
+                                @elseif($booking->status === 'sudah_bayar')
+                                    <span class="bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Disetujui</span>
                                 @else
                                     <span class="bg-amber-400/10 text-amber-400 border border-amber-400/20 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Pending</span>
                                 @endif
                             </td>
-                            <td class="py-4 px-4 text-right">
-                                <a href="#" class="text-emerald-400 hover:underline font-black text-[10px] uppercase">Periksa</a>
+                            <td class="py-4 px-4">
+                                <div class="flex items-center justify-end gap-2">
+                                    {{-- Untuk tombol Cek / Periksa --}}
+                            <a href="{{ route('admin.validasi.show', $booking->id) }}" class="...">
+                             <i class="fas fa-search"></i> Cek
+                            </a>
+
+                            {{-- Untuk tombol Hapus --}}
+                            <form action="{{ route('admin.booking.destroy', $booking->id) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
-                        {{-- Backup data contoh jika database pendaftaran kosong --}}
-                        <tr class="hover:bg-white/[0.02] transition">
-                            <td class="py-4 px-4 font-bold text-emerald-400">#SMR-280526</td>
-                            <td class="py-4 px-4 font-bold text-white">Hanif Ammar</td>
-                            <td class="py-4 px-4">28 Mei 2026</td>
-                            <td class="py-4 px-4"><span class="bg-amber-400/10 text-amber-400 border border-amber-400/20 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Pending</span></td>
-                            <td class="py-4 px-4 text-right"><a href="#" class="text-emerald-400 hover:underline font-black text-[10px] uppercase">Periksa</a></td>
-                        </tr>
                         <tr>
-                            <td colspan="5" class="py-6 text-center text-white/20 italic bg-white/[0.01]">Belum ada data pendaftaran baru lainnya dari database, Yang Mulia.</td>
+                            <td colspan="5" class="py-8 text-center text-white/40 italic">Tidak ada antrean validasi tiket saat ini, Yang Mulia.</td>
                         </tr>
-                    @endforelse {{-- 🌟 SEKARANG SUDAH FIX MENGGUNAKAN ENDFORELSE --}}
+                    @endforelse
                 </tbody>
             </table>
         </div>

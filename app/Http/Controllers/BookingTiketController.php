@@ -96,6 +96,7 @@ class BookingTiketController extends Controller
                          ->with('success', 'Pembayaran berhasil dikonfirmasi!');
     }
 
+
     // Halaman sukses
     public function sukses($id)
     {

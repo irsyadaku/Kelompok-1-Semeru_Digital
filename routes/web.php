@@ -84,14 +84,20 @@ Route::middleware(['auth', 'role:pendaki'])->group(function () {
 Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function () {
     Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
     Route::get('/users', [AdminController::class, 'users'])->name('users');
-    Route::get('/booking', [AdminController::class, 'booking'])->name('booking');
     Route::get('/berita', [AdminController::class, 'berita'])->name('berita');
-    Route::get('/tips', [AdminController::class, 'tips'])->name('tips');
-    Route::get('/kuota', [AdminController::class, 'kuota'])->name('kuota');
 
+    // HALAMAN DAFTAR VERIFIKASI (Aksi dialihkan ke fungsi yang baru)
     Route::get('/verifikasi', [AdminController::class, 'daftarVerifikasi'])->name('verifikasi');
-    Route::post('/verifikasi/{id}/terima', [AdminController::class, 'terimaPembayaran'])->name('terima');
-    Route::post('/verifikasi/{id}/tolak', [AdminController::class, 'tolakPembayaran'])->name('tolak');
+    Route::post('/verifikasi/{id}/terima', [AdminController::class, 'approve'])->name('terima');
+    Route::post('/verifikasi/{id}/tolak', [AdminController::class, 'reject'])->name('tolak');
+
+    // HALAMAN DETAIL VALIDASI (Diubah agar memanggil 'approve' dan 'reject')
+    Route::get('/validasi/{id}', [AdminController::class, 'showValidasi'])->name('validasi.show');
+    Route::post('/validasi/{id}/approve', [AdminController::class, 'approve'])->name('validasi.approve');
+    Route::post('/validasi/{id}/reject', [AdminController::class, 'reject'])->name('validasi.reject');
+
+    // FUNGSI EKSEKUTIF HAPUS DATA (Melanjutkan potongan kode Paduka yang terputus)
+    Route::delete('/booking/{id}', [AdminController::class, 'destroyBooking'])->name('booking.destroy');
 });
 
 // ============================================================

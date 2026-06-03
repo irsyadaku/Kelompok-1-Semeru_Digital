@@ -222,7 +222,7 @@ MAHAMERU <span class="text-emerald-400">3676 MDPL</span>
 
         <div class="space-y-4">
 
-            <a href="#" class="block group bg-[#1B263B] rounded-xl p-4 hover:bg-[#24344d] transition">
+            <a href="{{ url('/berita/detail/1') }}" class="block group bg-[#1B263B] rounded-xl p-4 hover:bg-[#24344d] transition">
 
                 <div class="flex gap-4">
 
@@ -251,7 +251,7 @@ MAHAMERU <span class="text-emerald-400">3676 MDPL</span>
 
             </a>
 
-            <a href="#" class="block group bg-[#1B263B] rounded-xl p-4 hover:bg-[#24344d] transition">
+            <a href="{{ url('/berita/detail/2') }}" class="block group bg-[#1B263B] rounded-xl p-4 hover:bg-[#24344d] transition">
 
                 <div class="flex gap-4">
 

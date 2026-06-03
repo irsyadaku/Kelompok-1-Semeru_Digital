@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;        // MENGAKTIFKAN MODEL USER
-use App\Models\Pendaftaran; // MENGAKTIFKAN MODEL PENDAFTARAN (Penghilang Garis Merah)
+use App\Models\Pendaftaran; // MENGAKTIFKAN MODEL PENDAFTARAN
 use Illuminate\Http\Request;
 
 class AdminController extends Controller
@@ -15,9 +15,9 @@ class AdminController extends Controller
     {
         $totalUser       = User::where('role', 'pendaki')->count();
         $totalBooking    = Pendaftaran::count();
-        $sudahBayar      = Pendaftaran::where('status', 'sudah_bayar')->count();
-        $menunggu        = Pendaftaran::where('status', 'menunggu_pembayaran')->count();
-        $totalPendapatan = Pendaftaran::where('status', 'sudah_bayar')->sum('jumlah_pendaki') * 100000; // Asumsi harga tiket per pendaki adalah 100.000
+        $sudahBayar      = Pendaftaran::where('status', 'disetujui')->count(); // Disesuaikan dengan status 'disetujui'
+        $menunggu        = Pendaftaran::where('status', 'menunggu_verifikasi')->count();
+        $totalPendapatan = Pendaftaran::where('status', 'disetujui')->sum('jumlah_pendaki') * 100000;
 
         $bookingTerbaru  = Pendaftaran::latest()->take(5)->get();
         $userTerbaru     = User::where('role', 'pendaki')->latest()->take(5)->get();
@@ -59,54 +59,52 @@ class AdminController extends Controller
     }
 
     /**
-     * Fungsi Terima Pembayaran
+     * Tampilan Detail Validasi Dokumen & KTP
      */
-    public function terimaPembayaran($id)
+    public function showValidasi($id)
+    {
+        $booking = Pendaftaran::findOrFail($id);
+        return view('validasi_detail', compact('booking'));
+    }
+
+    /**
+     * Fungsi Eksekutif: Hapus Data Booking secara Permanen
+     */
+    public function destroyBooking($id)
+    {
+        $booking = Pendaftaran::findOrFail($id);
+        $booking->delete();
+
+        return redirect()->back()->with('success', 'Data booking pendakian berhasil dihapus dari sistem, Yang Mulia.');
+    }
+
+    /**
+     * Fungsi Tolak Pembayaran / Validasi (REJECT)
+     */
+    public function reject($id)
     {
         $booking = Pendaftaran::findOrFail($id);
 
+        // Memastikan status tertulis 'ditolak' ke database
         $booking->update([
-            'status' => 'sudah_bayar'
+            'status' => 'ditolak'
         ]);
 
-        return redirect()->back()->with('success', 'Pembayaran tiket ' . $booking->kode_booking . ' berhasil diverifikasi!');
+        return redirect()->back()->with('error', 'Pembayaran ' . $booking->kode_booking . ' telah resmi DITOLAK. User harus mengunggah ulang bukti transfer.');
     }
 
     /**
-     * Fungsi Tolak Pembayaran
+     * Fungsi Terima / Setujui Pembayaran (APPROVE)
      */
-    public function tolakPembayaran($id)
+    public function approve($id)
     {
         $booking = Pendaftaran::findOrFail($id);
 
+        // Memastikan status tertulis 'disetujui' agar sesuai dengan badge hijau di antrean
         $booking->update([
-            'status' => 'menunggu_pembayaran'
+            'status' => 'disetujui'
         ]);
 
-        return redirect()->back()->with('error', 'Pembayaran ' . $booking->kode_booking . ' ditolak. User harus mengunggah ulang bukti transfer.');
-    }
-
-    /**
-     * Halaman Manajemen Berita
-     */
-    public function berita()
-    {
-        return view('admin_berita');
-    }
-
-    /**
-     * Halaman Manajemen Tips
-     */
-    public function tips()
-    {
-        return view('admin_tips');
-    }
-
-    /**
-     * Halaman Manajemen Kuota Pendakian
-     */
-    public function kuota()
-    {
-        return view('admin_kuota');
+        return redirect()->back()->with('success', 'Validasi berhasil, Yang Mulia! SIMAKSI untuk kode tiket #' . ($booking->kode_booking ?? 'SMR-'.$booking->id) . ' telah aktif.');
     }
 }
