@@ -78,26 +78,35 @@
                             <td class="py-4 px-4 font-bold text-white">{{ $booking->nama_ketua ?? 'Pendaki' }}</td>
                             <td class="py-4 px-4">{{ \Carbon\Carbon::parse($booking->tanggal_pendakian)->translatedFormat('d M Y') }}</td>
                             <td class="py-4 px-4">
-                                @if($booking->status === 'menunggu_verifikasi')
-                                    <span class="bg-blue-400/10 text-blue-400 border border-blue-400/20 px-2 py-0.5 rounded text-[9px] font-bold uppercase animate-pulse">Perlu Dicek</span>
-                                @elseif($booking->status === 'sudah_bayar')
+                                {{-- LOGIKA STATUS YANG TELAH DISEMPURNAKAN --}}
+                                @if(in_array(strtolower($booking->status), ['disetujui', 'sudah_bayar']))
                                     <span class="bg-emerald-400/10 text-emerald-400 border border-emerald-400/20 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Disetujui</span>
-                                @else
+                                @elseif(strtolower($booking->status) === 'ditolak')
+                                    <span class="bg-red-500/10 text-red-400 border border-red-500/20 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Ditolak</span>
+                                @elseif(strtolower($booking->status) === 'menunggu_verifikasi')
+                                    <span class="bg-blue-400/10 text-blue-400 border border-blue-400/20 px-2 py-0.5 rounded text-[9px] font-bold uppercase animate-pulse">Perlu Dicek</span>
+                                @elseif(strtolower($booking->status) === 'menunggu_pembayaran')
                                     <span class="bg-amber-400/10 text-amber-400 border border-amber-400/20 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Pending</span>
+                                @else
+                                    <span class="bg-slate-500/10 text-slate-400 border border-slate-500/20 px-2 py-0.5 rounded text-[9px] font-bold uppercase">{{ strtoupper($booking->status) }}</span>
                                 @endif
                             </td>
                             <td class="py-4 px-4">
                                 <div class="flex items-center justify-end gap-2">
                                     {{-- Untuk tombol Cek / Periksa --}}
-                            <a href="{{ route('admin.validasi.show', $booking->id) }}" class="...">
-                             <i class="fas fa-search"></i> Cek
-                            </a>
+                                    <a href="{{ route('admin.validasi.show', $booking->id) }}" class="...">
+                                        <i class="fas fa-search"></i> Cek
+                                    </a>
 
-                            {{-- Untuk tombol Hapus --}}
-                            <form action="{{ route('admin.booking.destroy', $booking->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                </form>
+                                    {{-- Untuk tombol Hapus --}}
+                                    <form action="{{ route('admin.booking.destroy', $booking->id) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        {{-- Tambahan button submit agar form berfungsi jika Paduka butuh (bisa disesuaikan style-nya) --}}
+                                        <button type="submit" class="text-red-400 hover:text-red-300">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
                         </tr>
