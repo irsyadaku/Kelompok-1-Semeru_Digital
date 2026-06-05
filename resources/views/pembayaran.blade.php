@@ -37,7 +37,6 @@
 
                 <span class="text-slate-400 flex items-center">Status Pembayaran</span>
                 <div class="text-right">
-                    {{-- STATUS DINAMIS --}}
                     @if(strtolower($booking->status) == 'menunggu_pembayaran')
                         <span class="text-amber-400 font-bold uppercase text-[10px] tracking-wider px-2.5 py-1 bg-amber-400/10 border border-amber-400/20 rounded-full">
                             Menunggu Pembayaran
@@ -66,66 +65,58 @@
             <div class="animate-fadeIn">
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-slate-300 mb-3">Pilih Metode Pembayaran</label>
-                    <div class="grid grid-cols-3 gap-3">
-                        <button type="button" onclick="switchPayment('bca')" id="tab-bca"
-                            class="payment-tab flex flex-col items-center justify-center p-4 bg-slate-950 border-2 border-emerald-500 rounded-2xl text-white transition-all duration-200">
-                            <span class="font-black text-blue-400 text-base tracking-wider">BCA</span>
-                            <span class="text-[10px] text-slate-400 mt-1">Transfer Bank</span>
-                        </button>
 
-                        <button type="button" onclick="switchPayment('qris')" id="tab-qris"
-                            class="payment-tab flex flex-col items-center justify-center p-4 bg-slate-950 border border-slate-800 rounded-2xl text-slate-400 hover:text-white hover:border-slate-700 transition-all duration-200">
-                            <span class="font-extrabold text-red-400 text-base tracking-tight">QRIS</span>
-                            <span class="text-[10px] text-slate-400 mt-1">E-Wallet / Bank</span>
-                        </button>
-
-                        <button type="button" onclick="switchPayment('dana')" id="tab-dana"
-                            class="payment-tab flex flex-col items-center justify-center p-4 bg-slate-950 border border-slate-800 rounded-2xl text-slate-400 hover:text-white hover:border-slate-700 transition-all duration-200">
-                            <span class="font-black text-sky-400 text-base tracking-wide">DANA</span>
-                            <span class="text-[10px] text-slate-400 mt-1">Dompet Digital</span>
-                        </button>
-                    </div>
+                    @if($metodePembayaran->isEmpty())
+                        <div class="p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl text-center text-xs font-semibold">
+                            Belum ada metode pembayaran aktif yang tersedia. Silakan hubungi pihak Admin.
+                        </div>
+                    @else
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            @foreach($metodePembayaran as $index => $method)
+                                <button type="button" onclick="switchPayment('{{ $method->id }}')" id="tab-{{ $method->id }}"
+                                    class="payment-tab flex flex-col items-center justify-center p-4 bg-slate-950 border-2 {{ $index === 0 ? 'border-emerald-500 text-white' : 'border-slate-800 text-slate-400' }} rounded-2xl transition-all duration-200">
+                                    <span class="font-black text-base tracking-wider {{ $method->tipe === 'qris' ? 'text-red-400' : 'text-blue-400' }}">
+                                        {{ $method->nama }}
+                                    </span>
+                                    <span class="text-[10px] text-slate-400 mt-1">{{ $method->kategori }}</span>
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
 
                 <div class="mb-8">
-                    <div id="content-bca" class="payment-content space-y-3 animate-fadeIn">
-                        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
-                            <div>
-                                <div class="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Nomor Rekening BCA</div>
-                                <div class="text-white font-mono text-lg font-bold tracking-widest" id="rek-bca">1234567890</div>
-                                <div class="text-slate-400 text-xs mt-0.5">An. Admin Pendakian Mahameru</div>
-                            </div>
-                            <button type="button" onclick="copyToClipboard('1234567890', this)" class="text-xs bg-slate-800 hover:bg-slate-700 text-emerald-400 px-3 py-1.5 rounded-xl transition">
-                                Salin
-                            </button>
-                        </div>
-                    </div>
+                    @foreach($metodePembayaran as $index => $method)
+                        <div id="content-{{ $method->id }}" class="payment-content space-y-3 animate-fadeIn {{ $index === 0 ? '' : 'hidden' }}">
 
-                    <div id="content-qris" class="payment-content space-y-3 hidden animate-fadeIn">
-                        <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col items-center justify-center text-center">
-                            <div class="text-xs text-slate-500 uppercase tracking-wider mb-3">Scan Kode QRIS di Bawah Ini</div>
-                            <div class="bg-white p-3 rounded-xl mb-3 shadow-lg group relative">
-                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://images.unsplash.com/photo-1540573133985-87b6da6d54a9"
-                                    alt="QRIS Mockup" class="w-44 h-44 rounded-lg transition-transform group-hover:scale-105 duration-200">
-                            </div>
-                            <div class="text-slate-400 text-xs max-w-xs">
-                                Bisa di-scan menggunakan kamera HP, GoPay, OVO, atau Dana.
-                            </div>
-                        </div>
-                    </div>
+                            @if($method->tipe === 'rekening')
+                                {{-- KONTEN REKENING BANK --}}
+                                <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
+                                    <div>
+                                        <div class="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Nomor Rekening {{ $method->nama }}</div>
+                                        <div class="text-white font-mono text-lg font-bold tracking-widest">{{ $method->nomor }}</div>
+                                        <div class="text-slate-400 text-xs mt-0.5">An. {{ $method->atas_nama }}</div>
+                                    </div>
+                                    <button type="button" onclick="copyToClipboard('{{ $method->nomor }}', this)" class="text-xs bg-slate-800 hover:bg-slate-700 text-emerald-400 px-3 py-1.5 rounded-xl transition">
+                                        Salin
+                                    </button>
+                                </div>
+                            @else
+                                {{-- KONTEN SCAN QRIS --}}
+                                <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-col items-center justify-center text-center">
+                                    <div class="text-xs text-slate-500 uppercase tracking-wider mb-3">Scan Kode QRIS di Bawah Ini</div>
+                                    <div class="bg-white p-3 rounded-xl mb-3 shadow-lg group relative">
+                                        <img src="{{ asset('storage/' . $method->qr_code_path) }}"
+                                            alt="QRIS {{ $method->nama }}" class="w-44 h-44 rounded-lg transition-transform group-hover:scale-105 duration-200 object-contain">
+                                    </div>
+                                    <div class="text-slate-400 text-xs max-w-xs">
+                                        Bisa di-scan menggunakan kamera HP perbankan atau aplikasi dompet digital pilihan Anda.
+                                    </div>
+                                </div>
+                            @endif
 
-                    <div id="content-dana" class="payment-content space-y-3 hidden animate-fadeIn">
-                        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex items-center justify-between">
-                            <div>
-                                <div class="text-xs text-slate-500 uppercase tracking-wider mb-0.5">Nomor Akun DANA</div>
-                                <div class="text-white font-mono text-lg font-bold tracking-widest" id="num-dana">081234567890</div>
-                                <div class="text-slate-400 text-xs mt-0.5">An. Admin Pendakian Mahameru</div>
-                            </div>
-                            <button type="button" onclick="copyToClipboard('081234567890', this)" class="text-xs bg-slate-800 hover:bg-slate-700 text-emerald-400 px-3 py-1.5 rounded-xl transition">
-                                Salin
-                            </button>
                         </div>
-                    </div>
+                    @endforeach
                 </div>
 
                 <form action="{{ route('pembayaran.upload', $booking->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
@@ -150,7 +141,7 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] text-slate-950 font-extrabold py-4 rounded-2xl transition-all shadow-lg shadow-emerald-500/10 tracking-wider">
+                    <button type="submit" @if($metodePembayaran->isEmpty()) disabled class="w-full bg-slate-800 text-slate-500 font-extrabold py-4 rounded-2xl cursor-not-allowed tracking-wider" @else class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[0.99] text-slate-950 font-extrabold py-4 rounded-2xl transition-all shadow-lg shadow-emerald-500/10 tracking-wider" @endif>
                         KONFIRMASI PEMBAYARAN
                     </button>
                 </form>
@@ -158,7 +149,7 @@
 
         @else
 
-            {{-- BAGIAN 2: LAYAR KESUKSESAN (Tampil setelah form disubmit & status berubah) --}}
+            {{-- BAGIAN 2: LAYAR KESUKSESAN --}}
             <div class="bg-emerald-500/10 border border-emerald-500/20 p-8 rounded-3xl text-center animate-fadeIn shadow-inner mt-4">
                 <div class="w-20 h-20 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-5 shadow-[0_0_30px_rgba(16,185,129,0.3)]">
                     <svg class="w-10 h-10 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,7 +176,6 @@
                         <span class="text-slate-300 italic text-xs text-right max-w-[150px]">Cek riwayat transaksi secara berkala.</span>
                     </div>
                 </div>
-
             </div>
 
         @endif
@@ -202,17 +192,17 @@
 </div>
 
 <script>
-    // 1. Fungsi Ganti Metode Pembayaran (Tabs)
-    function switchPayment(method) {
+    // 1. Fungsi Ganti Metode Pembayaran (Tabs Dinamis)
+    function switchPayment(methodId) {
         document.querySelectorAll('.payment-content').forEach(el => el.classList.add('hidden'));
         document.querySelectorAll('.payment-tab').forEach(el => {
             el.classList.remove('border-emerald-500', 'text-white');
             el.classList.add('border-slate-800', 'text-slate-400');
         });
 
-        document.getElementById(`content-${method}`).classList.remove('hidden');
+        document.getElementById(`content-${methodId}`).classList.remove('hidden');
 
-        const activeTab = document.getElementById(`tab-${method}`);
+        const activeTab = document.getElementById(`tab-${methodId}`);
         activeTab.classList.remove('border-slate-800', 'text-slate-400');
         activeTab.classList.add('border-emerald-500', 'text-white');
     }

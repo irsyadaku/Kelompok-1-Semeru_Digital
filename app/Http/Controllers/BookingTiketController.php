@@ -7,7 +7,8 @@ use App\Models\Pendaftaran;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage; // Penting untuk fungsi upload
-use Illuminate\Support\Facades\Hash;    // DITAMBAHKAN: Wajib untuk fungsi update password
+use Illuminate\Support\Facades\Hash;
+use App\Models\MetodePembayaran;
 
 class BookingTiketController extends Controller
 {
@@ -54,13 +55,18 @@ class BookingTiketController extends Controller
 
     // Halaman pembayaran
     public function pembayaran($id)
-    {
-        $booking = Pendaftaran::where('id', $id)
-                    ->where('user_id', Auth::id())
-                    ->firstOrFail();
+{
+    // 1. Tetap amankan data: hanya pemilik booking yang bisa mengakses halaman ini
+    $booking = Pendaftaran::where('id', $id)
+                ->where('user_id', Auth::id())
+                ->firstOrFail();
 
-        return view('pembayaran', compact('booking'));
-    }
+    // 2. Ambil data metode pembayaran dinamis yang telah ditambahkan oleh Admin
+    $metodePembayaran = \App\Models\MetodePembayaran::where('is_active', true)->get();
+
+    // 3. Kirimkan kedua data tersebut ke dalam view pembayaran.blade
+    return view('pembayaran', compact('booking', 'metodePembayaran'));
+}
 
     // --- FUNGSI BARU ---
     public function uploadBukti(Request $request, $id)

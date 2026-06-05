@@ -86,6 +86,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
     Route::get('/users', [AdminController::class, 'users'])->name('users');
     Route::get('/berita', [AdminController::class, 'berita'])->name('berita');
     Route::get('/profile', [AdminController::class, 'profile'])->name('profile');
+    Route::get('/booking', [AdminController::class, 'booking'])->name('booking');
 
     // HALAMAN DAFTAR VERIFIKASI (Aksi dialihkan ke fungsi yang baru)
     Route::get('/verifikasi', [AdminController::class, 'daftarVerifikasi'])->name('verifikasi');
@@ -99,6 +100,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 
     // FUNGSI EKSEKUTIF HAPUS DATA (Melanjutkan potongan kode Paduka yang terputus)
     Route::delete('/booking/{id}', [AdminController::class, 'destroyBooking'])->name('booking.destroy');
+    // FUNGSI METODE PEMBAYARAN
+    Route::get('/metode-pembayaran', [AdminController::class, 'paymentSettings'])->name('metode_pembayaran');
+    Route::post('/metode-pembayaran/save', [AdminController::class, 'savePaymentSetting'])->name('metode_pembayaran_save');
+    Route::delete('/metode-pembayaran/{id}', [AdminController::class, 'deletePaymentSetting'])->name('metode_pembayaran_delete');
 });
 
 // ============================================================

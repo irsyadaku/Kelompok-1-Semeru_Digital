@@ -65,6 +65,15 @@
                     <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
                         <i class="fas fa-th-large text-emerald-400 w-5"></i> Singgasana Admin
                     </a>
+                  <a href="{{ route('admin.metode_pembayaran') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
+    <i class="fas fa-wallet text-emerald-400 w-5"></i> Metode Pembayaran
+</a>
+                    <a href="{{ route('admin.booking') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
+     <i class="fas fa-file-alt text-emerald-400 w-5"></i> Daftar Riwayat
+</a>
+                   <a href="{{ route('admin.verifikasi') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
+    <i class="fas fa-check-double text-emerald-400 w-5"></i> Validasi Tiket
+</a>
                     <a href="{{ route('admin.profile') }}" class="flex items-center gap-3 text-white/70 hover:text-white hover:bg-white/5 px-3 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition">
                         <i class="fas fa-user-shield text-emerald-400 w-5"></i> Lihat Profil Admin
                     </a>
